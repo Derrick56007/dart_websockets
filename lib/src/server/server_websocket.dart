@@ -29,7 +29,7 @@ class ServerWebSocket extends CommonWebSocket {
 
   @override
   Future start({int retrySeconds = CommonWebSocket.defaultRetrySeconds}) async {
-    if (_url != null) {
+    if (_url == null) {
       _webSocket = await WebSocketTransformer.upgrade(_req)
         ..listen(onData);
 
