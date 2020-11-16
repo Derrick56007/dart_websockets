@@ -8,15 +8,15 @@ abstract class BaseServer {
   final String address;
   final int port;
 
-  HttpServer server;
-  StreamSubscription<HttpRequest> sub;
+  HttpServer _server;
+  StreamSubscription<HttpRequest> _sub;
 
   BaseServer(this.name, this.address, this.port);
 
   void init() async {
-    server = await HttpServer.bind(address, port);
-    server.idleTimeout = null;
-    sub = server.listen(_onRequest);
+    _server = await HttpServer.bind(address, port);
+    _server.idleTimeout = null;
+    _sub = _server.listen(_onRequest);
 
     print('$name server started at $address:$port');
   }
@@ -54,7 +54,7 @@ abstract class BaseServer {
   void handleSocketDone(HttpRequest req, ServerWebSocket socket);
 
   Future close() async {
-    await sub.cancel();
+    await _sub.cancel();
 
     print('$name server closed at $address:$port');
   }

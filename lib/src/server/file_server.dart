@@ -11,15 +11,15 @@ class FileServer extends BaseServer {
   static const defaultFilesDirectory = 'website/build/';
   static const defaultDefaultPagePath = 'website/build/index.html';
 
-  final VirtualDirectory staticFiles;
-  final File defaultPage;
+  final VirtualDirectory _staticFiles;
+  final File _defaultPage;
 
   FileServer(String address, int port,
       {String filesDirectory = defaultFilesDirectory, String defaultPagePath = defaultDefaultPagePath})
-      : staticFiles = VirtualDirectory(filesDirectory),
-        defaultPage = File(defaultPagePath),
+      : _staticFiles = VirtualDirectory(filesDirectory),
+        _defaultPage = File(defaultPagePath),
         super('file', address, port) {
-    staticFiles
+    _staticFiles
       ..jailRoot = false
       ..allowDirectoryListing = true
       ..directoryHandler = (dir, request) async {
@@ -28,9 +28,9 @@ class FileServer extends BaseServer {
         var file = File(indexUri.toFilePath());
 
         if (!(await file.exists())) {
-          file = defaultPage;
+          file = _defaultPage;
         }
-        staticFiles.serveFile(file, request);
+        _staticFiles.serveFile(file, request);
       };
   }
 
@@ -42,7 +42,7 @@ class FileServer extends BaseServer {
 
   @override
   Future<void> onRequestPost(HttpRequest req) async {
-    await staticFiles.serveRequest(req);
+    await _staticFiles.serveRequest(req);
   }
 
   @override
