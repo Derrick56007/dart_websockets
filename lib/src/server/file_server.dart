@@ -14,9 +14,10 @@ class FileServer extends BaseServer {
   final VirtualDirectory staticFiles;
   final File defaultPage;
 
-  FileServer(String address, int port, {String filesDirectory, String defaultPagePath})
-      : staticFiles = VirtualDirectory(filesDirectory ?? defaultFilesDirectory),
-        defaultPage = File(defaultPagePath ?? defaultDefaultPagePath),
+  FileServer(String address, int port,
+      {String filesDirectory = defaultFilesDirectory, String defaultPagePath = defaultDefaultPagePath})
+      : staticFiles = VirtualDirectory(filesDirectory),
+        defaultPage = File(defaultPagePath),
         super('file', address, port) {
     staticFiles
       ..jailRoot = false
