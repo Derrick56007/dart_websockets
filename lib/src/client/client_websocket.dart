@@ -52,6 +52,6 @@ class ClientWebSocket extends CommonWebSocket {
   }
 
   @override
-  void send(String type, [message]) => _webSocket
-      .send(message == null ? jsonEncode(type) : jsonEncode([type, message]));
+  void send(String type, [message]) =>
+      _webSocket.send(message == null ? jsonEncode(type) : jsonEncode([type, message]));
 }
