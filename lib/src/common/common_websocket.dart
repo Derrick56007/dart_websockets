@@ -73,7 +73,7 @@ abstract class CommonWebSocket {
     if (data is List && data.length == defaultLength) {
       // check if dispatch exists
       final type = data[typeIndex];
-      if (!dispatchers.containsKey(type)) {
+      if (type == null) {
         print('No such dispatch exists!: $type');
         return;
       }
@@ -99,9 +99,5 @@ abstract class CommonWebSocket {
     print('No such dispatch exists!: $data');
   }
 
-  void onData(d) {
-    final data = jsonDecode(d);
-
-    onDecodedData(data);
-  }
+  void onData(d) => onDecodedData(jsonDecode(d));
 }
