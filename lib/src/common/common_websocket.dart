@@ -2,15 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 
 abstract class CommonWebSocket {
-  static const typeIndex = 0;
-  static const messageIndex = 1;
-  static const defaultLength = 2;
+  static const _typeIndex = 0;
+  static const _messageIndex = 1;
+  static const _defaultLength = 2;
+  static const _two = 2;
+
   static const defaultRetrySeconds = 2;
-  static const two = 2;
 
-  final dispatchers = <String, void Function(dynamic data)>{};
+  final _dispatchers = <String, void Function(dynamic data)>{};
 
-  final singleDispatchCompleters = <String, Completer>{};
+  final _singleDispatchCompleters = <String, Completer>{};
 
   bool reconnectScheduled = false;
 
@@ -20,31 +21,30 @@ abstract class CommonWebSocket {
 
   void scheduleReconnect(int retrySeconds) {
     if (!reconnectScheduled) {
-      final newRetrySeconds = retrySeconds * two;
+      final newRetrySeconds = retrySeconds * _two;
 
       print('scheduling reconnect in $newRetrySeconds seconds');
 
-      Timer(Duration(seconds: retrySeconds),
-          () async => await start(retrySeconds: newRetrySeconds));
+      Timer(Duration(seconds: retrySeconds), () async => await start(retrySeconds: newRetrySeconds));
     }
     reconnectScheduled = true;
   }
 
   void on(String type, void Function(dynamic data) function) {
-    if (dispatchers.containsKey(type)) {
+    if (_dispatchers.containsKey(type)) {
       print('Overriding dispatch $type');
     }
 
-    dispatchers[type] = function;
+    _dispatchers[type] = function;
   }
 
   Future onSingleAsync(String type, void Function(dynamic data) function) {
-    singleDispatchCompleters[type] = Completer();
+    _singleDispatchCompleters[type] = Completer();
 
     void runOnceFunction(dynamic data) {
       // remove single dispatch
 
-      singleDispatchCompleters[type].complete();
+      _singleDispatchCompleters[type].complete();
 
       removeSingleDispatch(type);
 
@@ -53,33 +53,33 @@ abstract class CommonWebSocket {
 
     on(type, runOnceFunction);
 
-    return singleDispatchCompleters[type].future;
+    return _singleDispatchCompleters[type].future;
   }
 
   void removeDispatch(String type) {
     // print('removing dispatch $type');
-    dispatchers.remove(type);
+    _dispatchers.remove(type);
   }
 
   void removeSingleDispatch(String type) {
     removeDispatch(type);
 
-    singleDispatchCompleters.remove(type);
+    _singleDispatchCompleters.remove(type);
   }
 
   void send(String type, [message]);
 
   void onDecodedData(data) {
-    if (data is List && data.length == defaultLength) {
+    if (data is List && data.length == _defaultLength) {
       // check if dispatch exists
-      final type = data[typeIndex];
+      final type = data[_typeIndex];
       if (type == null) {
         print('No such dispatch exists!: $type');
         return;
       }
-      final msg = data[messageIndex];
+      final msg = data[_messageIndex];
 
-      dispatchers[type](msg);
+      _dispatchers[type](msg);
 
       return;
     }
@@ -88,11 +88,11 @@ abstract class CommonWebSocket {
       final type = data;
 
       // check if is command msg
-      if (!dispatchers.containsKey(type)) {
+      if (!_dispatchers.containsKey(type)) {
         print('No such dispatch exists!: $type');
         return;
       }
-      dispatchers[type]({});
+      _dispatchers[type]({});
       return;
     }
 
