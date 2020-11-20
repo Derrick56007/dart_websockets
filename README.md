@@ -1,11 +1,43 @@
 ## WebSockets for Dart
 
-`dart_websockets` is a pure dart library for establishing simple 
+**dart_websockets** is a pure dart library for establishing **simple** 
 [WebSocket](https://tools.ietf.org/html/rfc6455) servers and clients.
+
+## Project Structure
+
+See the [example](https://github.com/Derrick56007/dart_websockets/tree/main/example) folder for more details
+
+```
+project/
+├── bin
+│   └── server.dart
+├── website/
+│   ├── web/
+│   │   ├── favicon.ico
+│   │   ├── index.html
+│   │   ├── main.dart
+│   │   └── styles.css
+│   ├── .packages
+│   ├── analysis_options.yaml
+│   ├── pubspec.lock
+│   └── pubspec.yaml
+├── .packages
+├── analysis_options.yaml
+├── pubspec.lock
+└── pubspec.yaml
+```
+
+## Installation
+
+- Add dart_websockets to your pubspec.yaml dependencies
+- Enable webdev (`pub global activate webdev`)
+- Run (`webdev build`) inside website/
 
 ## Server-Side Usage
 
 ```dart
+// inside server.dart
+
 import 'dart:io';
 import 'package:dart_websockets/server.dart';
 
@@ -43,8 +75,27 @@ void main() async {
 
 ```
 
-## Features and bugs
+## Client-Side Usage
 
-Please file feature requests and bugs at the [issue tracker][tracker].
+```dart
+// inside main.dart
 
-[tracker]: http://example.com/issues/replaceme
+import 'package:dart_websockets/client.dart';
+
+void main() async {
+  final address = '127.0.0.1';
+  final port = 8081;
+
+  final client = ClientWebSocket(address, port);
+  await client.start();
+
+  client //
+    ..on('pong', (data) => onPong(client, data));
+
+  client.send('ping', 'ping data');
+}
+
+Future<void> onPong(ClientWebSocket socket, data) async {
+  print('pong data: $data');
+}
+```
