@@ -29,7 +29,7 @@ project/
 
 ## Installation
 
-- Add dart_websockets to your pubspec.yaml dependencies
+- Add `dart_websockets` to your pubspec.yaml dependencies
 - Enable webdev (`pub global activate webdev`)
 - Run (`webdev build`) inside website/
 
