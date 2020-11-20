@@ -14,12 +14,11 @@ class MyServer extends FileServer {
 
   @override
   void handleSocketStart(HttpRequest req, ServerWebSocket socket) {
-    // declare the messages to listen to
-    // here we are listening for the message 'ping'
-  
-    socket //
+    // when a socket connects to the server we declare the messages to listen to
+
+    socket // listening for the message 'ping'
       ..on('ping', (data) => onPing(socket, data));
-      
+
     // onPing will be called and passed data whenever the 'ping' message is received
   }
 
@@ -31,6 +30,7 @@ class MyServer extends FileServer {
   }
 }
 
+// run the server
 void main() async {
   const address = '0.0.0.0';
   const defaultPort = 8081;
@@ -40,6 +40,7 @@ void main() async {
   final server = MyServer(address, port);
   await server.init();
 }
+
 ```
 
 ## Features and bugs
